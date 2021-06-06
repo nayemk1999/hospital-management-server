@@ -21,6 +21,7 @@ client.connect(err => {
     const doctorsCollection = client.db("doctorsPortal").collection("doctors"); 
     const staffsCollection = client.db("doctorsPortal").collection("staffs"); 
     const patientsCollection = client.db("doctorsPortal").collection("patients"); 
+    const adminsCollection = client.db("doctorsPortal").collection("admins"); 
     
    
     app.get('/all-patients', (req, res)=>{
@@ -57,6 +58,7 @@ client.connect(err => {
             }
         })
     })
+
     app.post('/add-doctors', (req, res) => {
         const doctorsData = req.body;
         doctorsCollection.insertOne(doctorsData)
@@ -67,6 +69,7 @@ client.connect(err => {
             }
         })
     })
+
     app.post('/add-staff', (req, res) => {
         const staffData = req.body;
         staffsCollection.insertOne(staffData)
@@ -77,27 +80,37 @@ client.connect(err => {
             }
         })
     })
+    app.post('/add-admin', (req, res) => {
+        const adminData = req.body;
+        adminsCollection.insertOne(adminData)
+        .then(result => {
+            console.log(result);
+            if (result.insertedCount> 0) {
+                res.send(true)
+            }
+        })
+    })
 
 
-    app.post('/isAdmin', (req, res) => {
-        const email = req.body.email;
-        doctorCollection.find({ email: email })
+    app.get('/isAdmin', (req, res) => {
+        const email = req.query.email;
+        adminsCollection.find({ email: email })
+            .toArray((err, admins) => {
+                res.send(admins.length > 0);
+            })
+    })
+    app.get('/isDoctor', (req, res) => {
+        const email = req.query.email;
+        doctorsCollection.find({ email: email })
             .toArray((err, doctors) => {
                 res.send(doctors.length > 0);
             })
     })
-    app.post('/isDoctor', (req, res) => {
-        const email = req.body.email;
-        doctorCollection.find({ email: email })
-            .toArray((err, doctors) => {
-                res.send(doctors.length > 0);
-            })
-    })
-    app.post('/isStaff', (req, res) => {
-        const email = req.body.email;
-        doctorCollection.find({ email: email })
-            .toArray((err, doctors) => {
-                res.send(doctors.length > 0);
+    app.get('/isStaff', (req, res) => {
+        const email = req.query.email;
+        staffsCollection.find({ email: email })
+            .toArray((err, staffs) => {
+                res.send(staffs.length > 0);
             })
     })
 
