@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const bodyParser = require('body-parser')
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 require('dotenv').config()
 
 const app = express()
@@ -99,6 +100,23 @@ client.connect(err => {
                 res.send(doctors.length > 0);
             })
     })
+
+    app.delete('/admin-delete/:id', (req, res) => {
+        const id = ObjectID(req.params.id)
+        adminCollection.deleteOne({ _id: id })
+            .then(result => res.send(result.deletedCount > 0))
+    });
+    app.delete('/doctor-delete/:id', (req, res) => {
+        const id = ObjectID(req.params.id)
+        doctorsCollection.deleteOne({ _id: id })
+            .then(result => res.send(result.deletedCount > 0))
+    });
+    app.delete('/staff-delete/:id', (req, res) => {
+        const id = ObjectID(req.params.id)
+        staffsCollection.deleteOne({ _id: id })
+            .then(result => res.send(result.deletedCount > 0))
+    });
+
 });
 
 
