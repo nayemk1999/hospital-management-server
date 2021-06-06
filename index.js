@@ -8,7 +8,7 @@ require('dotenv').config()
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
-const {DB_USER, DB_PASS, DB_NAME} = process.env
+const {DB_USER, DB_PASS, DB_NAME, PORT} = process.env
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
@@ -133,4 +133,4 @@ client.connect(err => {
 });
 
 
-app.listen(3002)
+app.listen(PORT || 3002)
